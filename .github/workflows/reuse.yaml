@@ -40,6 +40,10 @@ jobs:
       run: |
           php artisan test
 
+    - name: dockerbuild
+      run: |
+          docker build .
+
     - name: Post to a Slack channel
       id: slack
       if: ${{ always() }}
