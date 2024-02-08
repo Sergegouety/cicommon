@@ -6,6 +6,9 @@ on:
       channel_id:
         required: true
         type: string
+      php_version:
+        required: true
+        type: array
     secrets:
       slack_token:
         required: true
@@ -17,7 +20,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        php: [8.2,8.1, 8.0]
+        php: ${{ inputs.php_version }}
         
     steps:
     - name: clone repo
@@ -52,7 +55,7 @@ jobs:
         channel-id: ${{ inputs.channel_id }}
         # For posting a simple plain text message
         #Envoie le messsage sur le canal slack le message devra contenir le status du job, Le numero du build, le runner surlequel ceci a été executé, le nom du workflow, le github repository
-        slack-message: "GitHub build result: ${{ job.status }}\n Numero du build :${{github.job}} \n Auteur :${{github.actor}}"
+        slack-message: "GitHub build result: ${{ job.status }}\n Nom du build :${{github.job}}\n Numero du build :${{github.sha}} \n Auteur :${{github.actor}}"
       env:
         #SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
