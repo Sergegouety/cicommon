@@ -6,9 +6,6 @@ on:
       channel_id:
         required: true
         type: string
-      php_version:
-        required: true
-        type: array
     secrets:
       slack_token:
         required: true
@@ -20,7 +17,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        php: ${{ inputs.php_version }}
+        php: [8.2,8.1, 8.0]
         
     steps:
     - name: clone repo
