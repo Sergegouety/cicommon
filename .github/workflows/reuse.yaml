@@ -55,7 +55,7 @@ jobs:
         slack-message: "GitHub build result: ${{ job.status }}\n Numero du build :${{github.job}} \n Auteur :${{github.actor}}"
       env:
         #SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        SLACK_BOT_TOKEN: ${{ inputs.slack_token }}
+        SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
 
 
       
