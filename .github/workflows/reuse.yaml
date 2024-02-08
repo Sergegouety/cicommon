@@ -9,7 +9,7 @@ on:
     secrets:
       slack_token:
         required: true
-        type: string
+        #type: string
 jobs: 
   build:
     runs-on: ubuntu-latest
