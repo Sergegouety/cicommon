@@ -6,6 +6,7 @@ on:
       channel_id:
         required: true
         type: string
+    secrets:
       slack_token:
         required: true
         type: string
