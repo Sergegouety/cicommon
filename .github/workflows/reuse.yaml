@@ -69,7 +69,7 @@ jobs:
          
     - name: Dependency Track
       run: |
-        curl -X "POST" "http://13.60.7.234:8081/api/v1/scan" \
+        curl -X "POST" "http://13.60.7.234:8081/api/v1/bom" \
         -H 'Content-Type: multipart/form-data' \
         -H "X-Api-Key: ${{ secrets.dependency_track_api_key }}" \
         -F "autoCreate=true" \
