@@ -44,6 +44,12 @@ jobs:
       run: |
           docker build .
 
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
     - name: Post to a Slack channel
       id: slack
       if: ${{ always() }}
