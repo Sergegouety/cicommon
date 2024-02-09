@@ -6,14 +6,18 @@ on:
       channel_id:
         required: true
         type: string
+      dependency_track_project_name:
+        required: true
+        type: string
     secrets:
       slack_token:
         required: true
         #type: string
       sonar_token:
         required: true
-        
       sonar_host_url:
+        required: true
+      dependency_track_api_key:
         required: true
         
 jobs: 
@@ -23,7 +27,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        php: [8.2,8.1, 8.0]
+        php: [8.2,8.1]
         
     steps:
     - name: clone repo
@@ -48,13 +52,29 @@ jobs:
 
     - name: dockerbuild
       run: |
-          docker build .
+          docker build . 
 
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.sonar_token }}
-        SONAR_HOST_URL: ${{ secrets.sonar_host_url }}
+    # - name: SonarQube Scan
+    #   uses: sonarsource/sonarqube-scan-action@master
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.sonar_token }}
+    #     SONAR_HOST_URL: ${{ secrets.sonar_host_url }}
+
+    - name: Generate SBOM with CycloneDX
+      run: |
+        composer require --dev cyclonedx/cyclonedx-php-composer
+        composer update
+        composer CycloneDX:make-sbom --output-file=sbom.xml
+         
+    - name: Dependency Track
+      run: |
+        curl -X "POST" "http://13.60.7.234:8081/api/v1/bom" \
+        -H 'Content-Type: multipart/form-data' \
+        -H "X-Api-Key: ${{ secrets.dependency_track_api_key }}" \
+        -F "autoCreate=true" \
+        -F "projectName=${{ inputs.dependency_track_project_name }}" \
+        -F "projectVersion=1.0" \
+        -F "bom=@./sbom.xml"
 
     - name: Post to a Slack channel
       id: slack
