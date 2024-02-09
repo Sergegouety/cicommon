@@ -12,10 +12,10 @@ on:
         #type: string
       sonar_token:
         required: true
-        #type: string
+        
       sonar_host_url:
         required: true
-        #type: string
+        
 jobs: 
   build:
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        php: 8.2
+        php: [8.2,8.1, 8.0]
         
     steps:
     - name: clone repo
