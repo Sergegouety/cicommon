@@ -50,9 +50,9 @@ jobs:
       run: |
           php artisan test
 
-    - name: dockerbuild
-      run: |
-          docker build . 
+    # - name: dockerbuild
+    #   run: |
+    #       docker build . 
 
     # - name: SonarQube Scan
     #   uses: sonarsource/sonarqube-scan-action@master
@@ -62,8 +62,8 @@ jobs:
 
     - name: Generate SBOM with CycloneDX
       run: |
+        composer config --no-plugins allow-plugins.cyclonedx/cyclonedx-php-composer true
         composer require --dev cyclonedx/cyclonedx-php-composer
-        composer config --no-plugins allow-plugins.cyclonedx/cyclonedx-php-composer false
         composer update
         composer CycloneDX:make-sbom --output-file=sbom.xml
          
