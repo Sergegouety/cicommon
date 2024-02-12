@@ -9,6 +9,10 @@ on:
       dependency_track_project_name:
         required: true
         type: string
+      target_folder_path:
+        required: true
+        type: string
+
     secrets:
       slack_token:
         required: true
@@ -92,6 +96,31 @@ jobs:
         key: ${{ secrets.key }}
         source: .
         target: /home/ec2-user/cd_pratique
+
+    - name: multiple command
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.host }}
+        username: ${{ secrets.username }}
+        port: 22
+        key: ${{ secrets.key }}
+        script: |
+          sudo yum update
+          sudo yum install httpd
+          sudo systemctl start httpd
+          sudo systemctl enable httpd
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php -r "if (hash_file('sha384', 'composer-setup.php') === 'edb40769019ccf227279e3bdd1f5b2e9950eb000c3233ee85148944e555d97be3ea4f40c3c2fe73b22f875385f6a5155') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
+          sudo mv /home/ec2-user/${{ inputs.target_folder_path }} /var/www/html/
+          cd /var/www/html/${{ inputs.target_folder_path }}
+          composer install --prefer-dist
+          composer update
+          cp .env.example .env
+          php artisan key:generate
+          php artisan serve
 
     - name: Post to a Slack channel
       id: slack
