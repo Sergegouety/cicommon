@@ -23,8 +23,6 @@ on:
         required: true
       username:
         required: true
-      port:
-        required: true
       key:
         required: true
         
