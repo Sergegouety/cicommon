@@ -33,7 +33,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        php: [8.2,8.1]
+        php: [8.2]
         
     steps:
     # - name: clone repo
@@ -91,7 +91,7 @@ jobs:
         port: 22
         key: ${{ secrets.key }}
         source: .
-        target: /home/
+        target: /home/ec2-user/cd_pratique
 
     - name: Post to a Slack channel
       id: slack
@@ -109,7 +109,6 @@ jobs:
       env:
         #SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
-
 
       
 
