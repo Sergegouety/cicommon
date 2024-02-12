@@ -90,7 +90,7 @@ jobs:
       with:
         host: ${{ secrets.host }}
         username: ${{ secrets.username }}
-        port: ${{ secrets.port }}
+        port: 22
         key: ${{ secrets.key }}
         source: .
         target: /home/
