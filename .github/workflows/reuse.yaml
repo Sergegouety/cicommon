@@ -107,8 +107,8 @@ jobs:
         script: |
           sudo yum update -y
           sudo yum install php -y
-          sudo yum install git -Y
-          sudo yum install httpd
+          sudo yum install git -y
+          sudo yum install httpd -y
           sudo systemctl start httpd
           sudo systemctl enable httpd
           php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -122,7 +122,7 @@ jobs:
           composer update
           cp .env.example .env
           php artisan key:generate
-          php artisan serve
+          php artisan up
 
     - name: Post to a Slack channel
       id: slack
