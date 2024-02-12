@@ -117,11 +117,12 @@ jobs:
           php -r "unlink('composer-setup.php');"
           sudo mv composer.phar /usr/local/bin/composer
           sudo mv /home/ec2-user/${{ inputs.target_folder_path }} /var/www/html/
+          sudo chown -R apache:apache /var/www/html/${{ inputs.target_folder_path }}
           cd /var/www/html/${{ inputs.target_folder_path }}
           composer install --prefer-dist
           composer update
           cp .env.example .env
-          php artisan key:generate
+          php artisan key:generate 
           php artisan up
 
     - name: Post to a Slack channel
