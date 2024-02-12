@@ -105,7 +105,9 @@ jobs:
         port: 22
         key: ${{ secrets.key }}
         script: |
-          sudo yum update
+          sudo yum update -y
+          sudo yum install php -y
+          sudo yum install git -Y
           sudo yum install httpd
           sudo systemctl start httpd
           sudo systemctl enable httpd
