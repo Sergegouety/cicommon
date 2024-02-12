@@ -19,6 +19,14 @@ on:
         required: true
       dependency_track_api_key:
         required: true
+      host:
+        required: true
+      username:
+        required: true
+      port:
+        required: true
+      key:
+        required: true
         
 jobs: 
   build:
@@ -30,25 +38,25 @@ jobs:
         php: [8.2,8.1]
         
     steps:
-    - name: clone repo
-      uses: actions/checkout@v3
+    # - name: clone repo
+    #   uses: actions/checkout@v3
 
-    - name: Setup PHP with PECL extension
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: imagick, swoole
+    # - name: Setup PHP with PECL extension
+    #   uses: shivammathur/setup-php@v2
+    #   with:
+    #     php-version: ${{ matrix.php }}
+    #     extensions: imagick, swoole
 
-    - name: keygenerate
-      run: |
-          composer install --prefer-dist
-          composer update
-          cp .env.example .env
-          php artisan key:generate 
+    # - name: keygenerate
+    #   run: |
+    #       composer install --prefer-dist
+    #       composer update
+    #       cp .env.example .env
+    #       php artisan key:generate 
 
-    - name: testexec
-      run: |
-          php artisan test
+    # - name: testexec
+    #   run: |
+    #       php artisan test
 
     # - name: dockerbuild
     #   run: |
@@ -60,22 +68,32 @@ jobs:
     #     SONAR_TOKEN: ${{ secrets.sonar_token }}
     #     SONAR_HOST_URL: ${{ secrets.sonar_host_url }}
 
-    - name: Generate SBOM with CycloneDX
-      run: |
-        composer config --no-plugins allow-plugins.cyclonedx/cyclonedx-php-composer true
-        composer require --dev cyclonedx/cyclonedx-php-composer
-        composer update
-        composer CycloneDX:make-sbom --output-file=sbom.xml
+    # - name: Generate SBOM with CycloneDX
+    #   run: |
+    #     composer config --no-plugins allow-plugins.cyclonedx/cyclonedx-php-composer true
+    #     composer require --dev cyclonedx/cyclonedx-php-composer
+    #     composer update
+    #     composer CycloneDX:make-sbom --output-file=sbom.xml
          
-    - name: Dependency Track
-      run: |
-        curl -X "POST" "http://13.60.7.234:8081/api/v1/bom" \
-        -H 'Content-Type: multipart/form-data' \
-        -H "X-Api-Key: ${{ secrets.dependency_track_api_key }}" \
-        -F "autoCreate=true" \
-        -F "projectName=${{ inputs.dependency_track_project_name }}" \
-        -F "projectVersion=1.0" \
-        -F "bom=@./sbom.xml"
+    # - name: Dependency Track
+    #   run: |
+    #     curl -X "POST" "http://13.60.7.234:8081/api/v1/bom" \
+    #     -H 'Content-Type: multipart/form-data' \
+    #     -H "X-Api-Key: ${{ secrets.dependency_track_api_key }}" \
+    #     -F "autoCreate=true" \
+    #     -F "projectName=${{ inputs.dependency_track_project_name }}" \
+    #     -F "projectVersion=1.0" \
+    #     -F "bom=@./sbom.xml"
+
+    - name: copy file via ssh key
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.host }}
+        username: ${{ secrets.username }}
+        port: ${{ secrets.port }}
+        key: ${{ secrets.key }}
+        source: .
+        target: /home/
 
     - name: Post to a Slack channel
       id: slack
